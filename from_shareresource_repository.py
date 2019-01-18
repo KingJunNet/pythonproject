@@ -1,25 +1,31 @@
 # -*- coding: utf-8 -*-
+from core.mongo_plus import OriShareResourceDBConfig
 from time_util import *
 from sql_db_client import MsDBClient,AzureDBClient
-from properties import ori_share_resource_db_config
+from cfg_helper import ori_share_resource_db_config
 
 # ori_share_resource_db_config= OriShareResourceDBConfig()
 # db_client = MsDBClient(host=ori_share_resource_db_config.host,
 #                        user=ori_share_resource_db_config.user,
 #                        pwd=ori_share_resource_db_config.pwd,
 #                        db=ori_share_resource_db_config.db_name)
-db_config= ori_share_resource_db_config()
-db_client = AzureDBClient(host=db_config["host"],
-                       user=db_config["user"],
-                       pwd=db_config["pwd"],
-                       db=db_config["db"])
+
+
+
+def db_client():
+    db_config = OriShareResourceDBConfig()
+    db_client_obj = AzureDBClient(host=db_config.host,
+                              user=db_config.user,
+                              pwd=db_config.pwd,
+                              db=db_config.db_name)
+    return db_client_obj
 
 def load_share_resourcesA(class_id, begin_time, end_time, page_index, page_size):
     datas = []
 
     row_begin = page_size * (page_index - 1)
     row_end = page_size * page_index
-    datas = db_client.ExecQuery("SELECT * FROM("
+    datas = db_client().ExecQuery("SELECT * FROM("
                                 " SELECT  ROW_NUMBER() OVER(ORDER BY Id ASC) AS ROWID,*"
                                 " FROM [dbo].[res_ShareResources]"
                                 " WHERE ClassId = " + str(class_id) +
@@ -32,7 +38,7 @@ def load_share_resources(class_id, begin_time, end_time, page_index, page_size):
 
     row_begin = page_size * (page_index - 1)
     row_end = page_size * page_index
-    datas = db_client.ExecQuery("SELECT R.ROWID,"
+    datas = db_client().ExecQuery("SELECT R.ROWID,"
                                 "R.Id,R.Guid,R.Name,R.SubjectCode,R.FileGuid,R.UserId,R.ClassId,"
                                 "R.Available,R.UpdateTime,R.CreateTime,R.ResourceType,"
                                 "R.ParentId,R.CanAppendChild,R.SyncTime,R.Permission,R.Size,S.Guid"
@@ -50,7 +56,7 @@ def load_share_resources(class_id, begin_time, end_time, page_index, page_size):
 def get_share_resource_count(class_id, begin_time, end_time):
     count=0
 
-    datas = db_client.ExecQuery("SELECT COUNT(Id)"                              
+    datas = db_client().ExecQuery("SELECT COUNT(Id)"                              
                                 " FROM [dbo].[res_ShareResources]"                        
                                 " WHERE Available=1 AND  ClassId = " + str(class_id) +
                                 " AND CreateTime >= " + time_sql_condition(begin_time) +
@@ -63,7 +69,7 @@ def get_share_resource_guid(ids):
     datas = []
 
     in_query = build_in_query_sql(ids)
-    datas = db_client.ExecQuery(
+    datas = db_client().ExecQuery(
         "SELECT Id,Guid FROM res_ShareResources"
         " WHERE Id IN " + in_query)
 
@@ -72,7 +78,7 @@ def get_share_resource_guid(ids):
 def load_class_ids(begin_time, end_time):
     datas = []
 
-    datas = db_client.ExecQuery(
+    datas = db_client().ExecQuery(
         "SELECT DISTINCT(ClassId) FROM [dbo].[res_ShareResources]"
         " WHERE CreateTime < " + time_sql_condition(end_time) +
         " AND CreateTime >= " + time_sql_condition(begin_time))

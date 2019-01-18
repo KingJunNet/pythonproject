@@ -1,24 +1,5 @@
 # -*- coding: utf-8 -*-
 
-env=0
-def set_env(env_code):
-    env=env_code
-
-def ori_share_resource_db_config():
-    if env == 0:
-        return ori_share_resource_db_config_dev
-    if env == 1:
-        return ori_share_resource_db_config_qa
-    if env == 2:
-        return ori_share_resource_db_config_production
-
-def user_db_config():
-    if env == 0:
-        return user_db_config_production_dev
-    if env == 1:
-        return user_db_config_production_qa
-    if env == 2:
-        return user_db_config_production_production
 
 ori_share_resource_db_config_dev = {"host": "192.168.200.201",
                                     "user": "sa",
@@ -49,4 +30,28 @@ user_db_config_production_production = {"host": "mi8xrtf2z2.database.chinaclouda
                                     "user": "webseat",
                                     "pwd": "Dfwd011**",
                                     "db": "WebSeat-Portal-Online-20160826"}
+
+share_resource_db_config_production_dev = {"host": "192.168.200.202",
+                                    "user": "sa",
+                                    "pwd": "123456aA",
+                                    "db": "WebSeat-Portal-Online-20170803"}
+
+share_resource_db_config_dev = {"host": "192.168.200.199",
+                                "port": 27017,
+                                    "user": "",
+                                    "pwd": "",
+                                    "db": "FcrShareResourceDBTransfer"}
+
+share_resource_db_config_qa = {"host": "192.168.200.199",
+                                "port": 27017,
+                                    "user": "",
+                                    "pwd": "",
+                                    "db": "FcrShareResourceDBQA"}
+
+share_resource_db_config_production = {"host": "192.168.200.199",
+                                "port": 27017,
+                                    "user": "",
+                                    "pwd": "",
+                                    "db": "FcrShareResourceDBTransferProduction"}
+
 

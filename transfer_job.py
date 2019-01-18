@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 current_working_directory = r"F:\king_project\python_project\fcr.shareresource.datatransfer"
@@ -8,11 +9,10 @@ sys.path.append(r"F:\king_project\python_project\fcr.shareresource.datatransfer\
 sys.path.append(r"F:\king_project\python_project\fcr.shareresource.datatransfer\venv\Lib")
 sys.path.append(r"F:\king_project\python_project\fcr.shareresource.datatransfer\venv\Lib\site-packages")
 print sys.path
-import time
-from log import *
-from shareresource_repository import ShareResourceRepository, MongoServiceConfig
-from time_util import *
+# from shareresource_repository import ShareResourceRepository, MongoServiceConfig
 from handler import *
+from cfg_helper import *
+from core.mongo_plus import MongoServiceConfig, OriShareResourceDBConfig, UserDBConfig
 
 
 def main():
@@ -71,54 +71,48 @@ def input_to_time(from_time):
         return to_time
 
 def input_env():
-    env_code = raw_input(u"输入环境变量，dev：0,qa：1,production：2:")
-    env = int(env_code)
+    env_input = raw_input(u"输入环境变量，dev：0,qa：1,production：2:")
+    env = int(env_input)
     return env
 
 def global_init():
     env_code = raw_input(u"输入环境变量，dev：0,qa：1,production：2:")
     env = int(env_code)
-    if env==0:
-        dev_db_cfg_init()
-    if env == 1:
-        qa_db_cfg_init()
-    if env == 2:
-        production_db_cfg_init()
+    db_cfg_init(env)
 
-def dev_db_cfg_init():
+def db_cfg_init(env):
+    db_cfg= load_db_config(env)
+
+    # "ori_share_resource_db_config": ori_share_resource_db_config(env),
+    #     "user_db_config": user_db_config(env),
+    #     "share_resource_db_config": share_resource_db_config(env),
+
+    # # 加载mongo数据库配置
+    # mongo_conf = MongoServiceConfig()
+    # mongo_conf.init(ip='192.168.200.199', port=27017, db_name='FcrShareResourceDBTransferProduction', user='', pwd='')
+
     # 加载mongo数据库配置
+    share_resource_db_config=db_cfg["share_resource_db_config"]
     mongo_conf = MongoServiceConfig()
-    mongo_conf.init(ip='192.168.200.199', port=27017, db_name='FcrShareResourceDBTransferProduction', user='', pwd='')
+    mongo_conf.init(ip=share_resource_db_config["host"],
+                    port=share_resource_db_config["port"],
+                    db_name=share_resource_db_config["db"],
+                    user=share_resource_db_config["user"],
+                    pwd=share_resource_db_config["pwd"])
 
-    # ori_share_resource_db_config = OriShareResourceDBConfig()
-    # ori_share_resource_db_config.init(host='192.168.200.201', db_name='Test.EastEdu-FCR-Online', user='sa',
-    #                                   pwd='123456aA')
-    #
-    # user_db_config = UserDBConfig()
-    # user_db_config.init(host='192.168.200.202', db_name='WebSeat-Portal-Online-20170803', user='sa', pwd='123456aA')
+    ori_share_resource_db_config_item = db_cfg["ori_share_resource_db_config"]
+    ori_share_resource_db_config = OriShareResourceDBConfig()
+    ori_share_resource_db_config.init(host=ori_share_resource_db_config_item["host"],
+                                      db_name=ori_share_resource_db_config_item["db"],
+                                      user=ori_share_resource_db_config_item["user"],
+                                      pwd=ori_share_resource_db_config_item["pwd"])
 
-def qa_db_cfg_init():
-    # 加载mongo数据库配置
-    mongo_conf = MongoServiceConfig()
-    mongo_conf.init(ip='192.168.200.199', port=27017, db_name='FcrShareResourceDBQA', user='', pwd='')
-
-    # ori_share_resource_db_config = OriShareResourceDBConfig()
-    # ori_share_resource_db_config.init(host='192.168.101.77', db_name='EastEdu-FCR-Online-Test', user='sa',
-    #                                   pwd='123456aA')
-    #
-    # user_db_config = UserDBConfig()
-    # user_db_config.init(host='192.168.200.202', db_name='WebSeat-Portal-Online-20170803', user='sa', pwd='123456aA')
-def production_db_cfg_init():
-    # 加载mongo数据库配置
-    mongo_conf = MongoServiceConfig()
-    mongo_conf.init(ip='192.168.200.199', port=27017, db_name='FcrShareResourceDBTransferProduction', user='', pwd='')
-
-    # ori_share_resource_db_config = OriShareResourceDBConfig()
-    # ori_share_resource_db_config.init(host='192.168.101.77', db_name='EastEdu-FCR-Online-Test', user='sa',
-    #                                   pwd='123456aA')
-    #
-    # user_db_config = UserDBConfig()
-    # user_db_config.init(host='192.168.200.202', db_name='WebSeat-Portal-Online-20170803', user='sa', pwd='123456aA')
+    user_db_config_item = db_cfg["user_db_config"]
+    user_db_config = UserDBConfig()
+    user_db_config.init(host=user_db_config_item["host"],
+                                      db_name=user_db_config_item["db"],
+                                      user=user_db_config_item["user"],
+                                      pwd=user_db_config_item["pwd"])
 
 main()
 

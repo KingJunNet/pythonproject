@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from core.mongo_plus import *
+from core.base import *
 from entity import UserResource, ShareResource
 
 

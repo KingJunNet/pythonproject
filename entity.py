@@ -3,7 +3,7 @@
 import time
 import datetime
 
-from core.mongo_plus import BaseEntity
+from core.base import BaseEntity
 
 class UserResource(BaseEntity):
     def __init__(self, userId=0,
