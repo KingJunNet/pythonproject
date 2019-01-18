@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.mongo_plus import MongoSession
+from core.mongo_pro import MongoSession
 
 
 class JsonConvert:
