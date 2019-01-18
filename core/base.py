@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.mongo_pro import MongoSession
 
-
 class JsonConvert:
     """
            Json转换器

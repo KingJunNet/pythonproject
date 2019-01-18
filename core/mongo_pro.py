@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from pymongo import MongoClient
-
-from core.mongo_plus import MongoServiceConfig
-
+from core.db_config import MongoServiceConfig
 
 class MongoSession:
     """

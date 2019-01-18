@@ -1,21 +1,11 @@
 # -*- coding: utf-8 -*-
 # from datetime import datetime,timedelta
-from core.mongo_plus import UserDBConfig
-from core.sql_db_client import AzureDBClient
+from core.db_config import UserDBConfig
+from core.sql_pro import sql_sesson
 
 
-# user_db_config = UserDBConfig()
-# db_client = MsDBClient(host=user_db_config.host,
-#                        user=user_db_config.user,
-#                        pwd=user_db_config.pwd,
-#                        db=user_db_config.db_name)
 def db_client():
-    db_config = UserDBConfig()
-    db_client_obj = AzureDBClient(host=db_config.host,
-                              user=db_config.user,
-                              pwd=db_config.pwd,
-                              db=db_config.db_name)
-    return db_client_obj
+    return sql_sesson(UserDBConfig())
 
 def load_class_student_users(class_id):
     datas = []

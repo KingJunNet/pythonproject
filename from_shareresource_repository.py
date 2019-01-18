@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from core.mongo_plus import OriShareResourceDBConfig
+from core.db_config import OriShareResourceDBConfig
 from core.time_util import *
 from core.sql_db_client import AzureDBClient
-
+from core.sql_pro import sql_sesson
 
 # ori_share_resource_db_config= OriShareResourceDBConfig()
 # db_client = MsDBClient(host=ori_share_resource_db_config.host,
@@ -13,12 +13,7 @@ from core.sql_db_client import AzureDBClient
 
 
 def db_client():
-    db_config = OriShareResourceDBConfig()
-    db_client_obj = AzureDBClient(host=db_config.host,
-                              user=db_config.user,
-                              pwd=db_config.pwd,
-                              db=db_config.db_name)
-    return db_client_obj
+    return sql_sesson(OriShareResourceDBConfig())
 
 def load_share_resourcesA(class_id, begin_time, end_time, page_index, page_size):
     datas = []
