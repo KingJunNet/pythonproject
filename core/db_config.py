@@ -17,15 +17,6 @@ class SqlDBConfig:
     def init_from_config_file(self, config_file_path):
         pass
 
-@singleton
-class OriShareResourceDBConfig(SqlDBConfig):
-    def __init__(self):
-        SqlDBConfig.__init__(self)
-
-@singleton
-class UserDBConfig(SqlDBConfig):
-    def __init__(self):
-        SqlDBConfig.__init__(self)
 
 @singleton
 class MongoServiceConfig:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.db_config import OriShareResourceDBConfig
+from cfg_mapper import OriShareResourceDBConfig
 from core.time_util import *
 from core.sql_db_client import AzureDBClient
 from core.sql_pro import sql_sesson

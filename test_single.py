@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
-import sys
-current_working_directory = "F:\king_project\python_project\fcr.shareresource.datatransfer"
-sys.path.append(current_working_directory)
+
+import cfg_mapper
 
 def input():
     print u'测试'

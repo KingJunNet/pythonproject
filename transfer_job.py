@@ -12,7 +12,8 @@ print sys.path
 # from shareresource_repository import ShareResourceRepository, MongoServiceConfig
 from handler import *
 from cfg_helper import *
-from core.db_config import MongoServiceConfig, OriShareResourceDBConfig, UserDBConfig
+from core.db_config import MongoServiceConfig
+from cfg_mapper import OriShareResourceDBConfig, UserDBConfig
 
 
 def main():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # from datetime import datetime,timedelta
-from core.db_config import UserDBConfig
+from cfg_mapper import UserDBConfig
 from core.sql_pro import sql_sesson
 
 
