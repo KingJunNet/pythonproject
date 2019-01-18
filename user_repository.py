@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import datetime
-import time
 # from datetime import datetime,timedelta
 from core.mongo_plus import UserDBConfig
-from sql_db_client import MsDBClient,AzureDBClient
-from cfg_helper import user_db_config
+from core.sql_db_client import AzureDBClient
+
 
 # user_db_config = UserDBConfig()
 # db_client = MsDBClient(host=user_db_config.host,

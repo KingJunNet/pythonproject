@@ -28,7 +28,6 @@ class UserDBConfig(SqlDBConfig):
     def __init__(self):
         SqlDBConfig.__init__(self)
 
-
 @singleton
 class MongoServiceConfig:
     def __init__(self):
@@ -70,7 +69,6 @@ class MongoSession:
         self.connect_str='mongodb://%s:%d'%(ip,port)
         self.mongo_client = MongoClient(self.connect_str)
         self.db = self.mongo_client[db_name]
-
 
 # #test
 # # 加载mongo数据库配置

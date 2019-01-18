@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from core.mongo_plus import OriShareResourceDBConfig
-from time_util import *
-from sql_db_client import MsDBClient,AzureDBClient
-from cfg_helper import ori_share_resource_db_config
+from core.time_util import *
+from core.sql_db_client import AzureDBClient
+
 
 # ori_share_resource_db_config= OriShareResourceDBConfig()
 # db_client = MsDBClient(host=ori_share_resource_db_config.host,
