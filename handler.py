@@ -36,12 +36,15 @@ class DataHandler:
         try:
             # 获取班级
             self.init_class_data()
-            if len(self.class_ids) <= 0:
+            class_size=len(self.class_ids)
+            if  class_size<= 0:
                 log_info('本次任务需要处理的班级数据为空，处理结束，%s' % self.data_tag)
                 return
-            log_info('本次任务需要处理的班级数据有%d个，%s' % (len(self.class_ids), self.data_tag))
-            for class_id in self.class_ids:
-                log_info('处理班级-%d数据，%s' % (class_id, self.data_tag))
+            log_info('本次任务需要处理的班级数据有%d个，%s' % (class_size, self.data_tag))
+
+            for index in range(class_size):
+                class_id=self.class_ids[index]
+                log_info('处理班级%d-%d-%d数据，%s' % (class_size,index+1,class_id, self.data_tag))
                 try:
                     class_data_handler = ClassDataHandler(class_id, self.begin_time, self.end_time)
                     class_data_handler.work()
@@ -51,8 +54,8 @@ class DataHandler:
                     self.ex_record_count+=(class_data_handler.ex_records.size())
                     self.user_resource_count+=class_data_handler.user_resource_count
                 except Exception, ex:
-                    log_ex('处理班级-%d数据发生异常：%s,%s' % (class_id,ex.message, self.data_tag))
-                log_info('班级-%d数据处理结束，%s' % (class_id, self.data_tag))
+                    log_ex('处理班级%d-%d-%d数据发生异常：%s,%s' % (class_size,index+1,class_id,ex.message, self.data_tag))
+                log_info('班级%d-%d-%d数据处理结束，%s' % (class_size,index+1,class_id, self.data_tag))
 
             #输出报表
             log_info('本次任务数据处理完毕，需处理共享资源数目：%d,实际入库共享资源数目：%d'
@@ -180,16 +183,16 @@ class ClassDataHandler:
         #遍历处理
         for index in range(self.page_count):
             self.page_index = index + 1
-            log_info('开始处理第%d页数据，%s' % (self.page_index, self.data_tag))
+            log_info('开始处理第%d-%d页数据，%s' % (self.page_count,self.page_index, self.data_tag))
             try:
                 # 获取数据
                 datas = load_share_resources(self.class_id, self.begin_time, self.end_time, self.page_index,
                                              self.page_size)
                 self.deal_share_resource_datas(datas)
             except Exception,ex:
-                log_ex('处理第%d页数据发生异常：%s,%s' % (self.page_index, ex.message, self.data_tag))
+                log_ex('处理第%d-%d页数据发生异常：%s,%s' % (self.page_count,self.page_index, ex.message, self.data_tag))
                 continue
-            log_info('第%d页数据处理完毕，%s' % (self.page_index, self.data_tag))
+            log_info('第%d-%d页数据处理完毕，%s' % (self.page_count,self.page_index, self.data_tag))
 
         self.dispose()
         log_info('班级数据处理完毕，需处理共享资源数目：%d,实际入库共享资源数目：%d'
