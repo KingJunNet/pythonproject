@@ -2,7 +2,6 @@
 import datetime
 import time
 # from datetime import datetime,timedelta
-from core.db_config import UserDBConfig
 from sql_db_client import MsDBClient,AzureDBClient
 from properties import user_db_config
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from core.db_config import OriShareResourceDBConfig
 from time_util import *
 from sql_db_client import MsDBClient,AzureDBClient
 from properties import ori_share_resource_db_config

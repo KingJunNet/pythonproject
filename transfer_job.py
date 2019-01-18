@@ -119,6 +119,7 @@ def production_db_cfg_init():
     #
     # user_db_config = UserDBConfig()
     # user_db_config.init(host='192.168.200.202', db_name='WebSeat-Portal-Online-20170803', user='sa', pwd='123456aA')
+
 main()
 
 
