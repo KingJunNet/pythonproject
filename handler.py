@@ -28,6 +28,7 @@ class DataHandler:
         self.share_resources_count = 0
         self.user_resource_count = 0
         self.ex_record_count =0
+        self.class_deleted_count = 0
 
 
     def work(self):
@@ -53,14 +54,23 @@ class DataHandler:
                     self.share_resources_count+=class_data_handler.share_resources_count
                     self.ex_record_count+=(class_data_handler.ex_records.size())
                     self.user_resource_count+=class_data_handler.user_resource_count
+                    self.class_deleted_count +=class_data_handler.class_deleted_count
                 except Exception, ex:
                     log_ex('处理班级%d-%d-%d数据发生异常：%s,%s' % (class_size,index+1,class_id,ex.message, self.data_tag))
                 log_info('班级%d-%d-%d数据处理结束，%s' % (class_size,index+1,class_id, self.data_tag))
 
             #输出报表
-            log_info('本次任务数据处理完毕，需处理共享资源数目：%d,实际入库共享资源数目：%d'
-                     ',存在异常共享资源数目：%d,入库用户资源数目：%d，%s' %
-                     (self.count, self.share_resources_count, self.ex_record_count, self.user_resource_count,
+            log_info('本次任务数据处理完毕，'
+                     '需处理共享资源数目：%d,'
+                     '实际入库共享资源数目：%d,'
+                     '对应班级已被删除或已无用户资源数目：%d,'
+                     '存在异常共享资源数目：%d,'
+                     '入库用户资源数目：%d，%s' %
+                     (self.count,
+                      self.share_resources_count,
+                      self.class_deleted_count,
+                      self.ex_record_count,
+                      self.user_resource_count,
                       self.data_tag))
         except Exception,ex:
             log_ex('发生异常：%s,%s' % (ex.message, self.data_tag))
@@ -97,6 +107,7 @@ class ClassDataHandler:
         self.share_resources_count=0
         self.user_resource_count=0
         self.ex_records=ExRecordList()
+        self.class_deleted_count=0
         self.share_resource_repository= ShareResourceRepository()
         self.user_resource_repository = UserResourceRepository()
         self.ex_record_repository=ExRecordRepository()
@@ -174,6 +185,7 @@ class ClassDataHandler:
         #是否有数据需要处理
         if len(self.student_users) <= 0 and len(self.subject_teacher_users) <= 0:
             log_info('该班级已被删除或已无用户，处理结束，%s' % (self.data_tag))
+            self.class_deleted_count=self.count
             return
         if self.count<=0 or self.page_count<=0:
             log_info('该班级下无数据，处理结束，%s' % (self.data_tag))
