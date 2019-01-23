@@ -3,7 +3,7 @@ from core.db_config import SqlDBConfig
 from core.sql_db_client import AzureDBClient,MsDBClient
 
 
-def sql_sesson(db_config=SqlDBConfig(),is_azure=False):
+def sql_sesson(db_config=SqlDBConfig(),is_azure=True):
     db_client=None
     if is_azure:
         db_client = AzureDBClient(host=db_config.host,
