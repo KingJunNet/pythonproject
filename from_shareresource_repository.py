@@ -27,7 +27,7 @@ def load_share_resources(class_id, begin_time, end_time, page_index, page_size):
                                 " From (SELECT * FROM("
                                 " SELECT  ROW_NUMBER() OVER(ORDER BY Id ASC) AS ROWID,*"
                                 " FROM [dbo].[res_ShareResources]"
-                                " WHERE Available=1 AND  ClassId = " + str(class_id) +
+                                " WHERE ClassId = " + str(class_id) +
                                 " AND UpdateTime >=" + time_sql_condition(begin_time) +
                                 " AND UpdateTime < " + time_sql_condition(end_time) + ") AS TEMP"
                                 " WHERE ROWID > " + str(row_begin) + " AND ROWID <=" + str(row_end) +
@@ -40,7 +40,7 @@ def get_share_resource_count(class_id, begin_time, end_time):
 
     datas = db_client().ExecQuery("SELECT COUNT(Id)"                              
                                 " FROM [dbo].[res_ShareResources]"                        
-                                " WHERE Available=1 AND  ClassId = " + str(class_id) +
+                                " WHERE ClassId = " + str(class_id) +
                                 " AND UpdateTime >= " + time_sql_condition(begin_time) +
                                 " AND UpdateTime < " + time_sql_condition(end_time))
     count=datas[0][0]

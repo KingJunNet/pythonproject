@@ -75,6 +75,7 @@ class DataHandler:
         self.user_resource_count = 0
         self.ex_record_count =0
         self.class_deleted_count = 0
+        self.share_resources_deleted_count = 0
 
 
     def work(self):
@@ -101,6 +102,7 @@ class DataHandler:
                     self.ex_record_count+=(class_data_handler.ex_records.size())
                     self.user_resource_count+=class_data_handler.user_resource_count
                     self.class_deleted_count +=class_data_handler.class_deleted_count
+                    self.share_resources_deleted_count += class_data_handler.share_resources_deleted_count
                 except Exception, ex:
                     log_ex('处理班级%d-%d-%d数据发生异常：%s,%s' % (class_size,index+1,class_id,ex.message, self.data_tag))
                 log_info('班级%d-%d-%d数据处理结束，%s' % (class_size,index+1,class_id, self.data_tag))
@@ -111,11 +113,13 @@ class DataHandler:
                      '实际入库共享资源数目：%d,'
                      '对应班级已被删除或已无用户资源数目：%d,'
                      '存在异常共享资源数目：%d,'
+                     '避免重复入库被删除资源数目：%d,'
                      '入库用户资源数目：%d，%s' %
                      (self.count,
                       self.share_resources_count,
                       self.class_deleted_count,
                       self.ex_record_count,
+                      self.share_resources_deleted_count,
                       self.user_resource_count,
                       self.data_tag))
         except Exception,ex:
@@ -154,9 +158,12 @@ class ClassDataHandler:
         self.user_resource_count=0
         self.ex_records=ExRecordList()
         self.class_deleted_count=0
+        self.share_resources_deleted_count = 0
         self.share_resource_repository= ShareResourceRepository()
         self.user_resource_repository = UserResourceRepository()
         self.ex_record_repository=ExRecordRepository()
+
+        # self.test_delete_share_resource()
 
     def get_data(self, page_index, page_size):
         """"
@@ -418,10 +425,37 @@ class ClassDataHandler:
                 continue
             share_resources.append(share_resource)
 
-        #补充parentId，暂时方案
-        # self.share_resources_parent_id_patch(share_resources)
+        #删除已入库资源
+        self.delete_have_added_share_resource_patch(share_resources)
 
         return share_resources
+
+    def select_before_begin_time_created_gid(self,share_resource=ShareResource()):
+        if share_resource.createTime<self.begin_time:
+            return share_resource.gid
+
+    def delete_have_added_share_resource_patch(self, share_resources):
+        """"
+                     删除已入库资源
+                     :param  share_resources:  共享资源集合
+                     :return:
+                     """
+        try:
+
+            gids = map(self.select_gid, share_resources)
+            if gids == None or len(gids) <= 0:
+                return
+
+            self.share_resources_deleted_count+=len(gids)
+            self.share_resource_repository.batch_delete_by_gid(gids)
+            self.user_resource_repository.batch_delete_by_gid(gids)
+        except Exception,ex:
+            raise Exception('删除已入库资源发生异常：%s' % ex.message)
+
+    def test_delete_share_resource(self):
+        gids = ['75299048-24dc-4233-922d-c900ea24f8b5','f2112c6d-736f-472a-ab96-4873f081cc22']
+        self.share_resource_repository.batch_delete_by_gid(gids)
+        self.user_resource_repository.batch_delete_by_gid(gids)
 
     def extract_user_info(self,datas):
         #筛选需要在库里查询的用户Id

@@ -11,6 +11,10 @@ class ShareResourceRepository(BaseRepository):
     def __init__(self):
         BaseRepository.__init__(self)
 
+    def batch_delete_by_gid(self,gids=[]):
+        query = {'gid': {'$in':gids}}
+        result = self.get_collection().delete_many(query)
+
     def get_collection(self):
         return self.mongo_session.db.ShareResource
 
@@ -20,6 +24,10 @@ class UserResourceRepository(BaseRepository):
                """
     def __init__(self):
         BaseRepository.__init__(self)
+
+    def batch_delete_by_gid(self,gids=[]):
+        query = {'shareResourceId': {'$in':gids}}
+        result = self.get_collection().delete_many(query)
 
     def get_collection(self):
         return self.mongo_session.db.UserShareResource
