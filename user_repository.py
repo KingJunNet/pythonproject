@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # from datetime import datetime,timedelta
 from cfg_mapper import UserDBConfig
-from core.sql_pro import sql_sesson
+from core.sql_pro import *
 
 
 def db_client():
@@ -41,7 +41,7 @@ def load_class_subject_teacher(class_id):
 
 def get_user_identity(user_id):
     datas = db_client().ExecQuery(
-        "SELECT [Identity] FROM[dbo].[Users]"
+        "SELECT Identity FROM[dbo].[Users]"
         " WHERE Id =" + str(user_id))
 
     Identity = datas[0][0]
@@ -52,12 +52,22 @@ def get_user(user_id):
     user =None
 
     datas = db_client().ExecQuery(
-        "SELECT * FROM[dbo].[Users]"
+        "SELECT [Identity] FROM[dbo].[Users]"
         " WHERE Id =" + str(user_id))
     if len(datas)>0:
         user=datas[0]
 
     return user
+
+def batch_get_user(ids=[]):
+    datas = []
+
+    in_query = build_in_query_sql(ids)
+    datas = db_client().ExecQuery(
+        "SELECT Id, [Identity] FROM [dbo].[Users]"
+        " WHERE Id IN " + in_query)
+
+    return datas
 
 # #test
 # # load_class_student_users(7157)

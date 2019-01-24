@@ -18,4 +18,14 @@ def sql_sesson(db_config=SqlDBConfig(),is_azure=True):
 
     return db_client
 
+def build_in_query_sql(ids=[]):
+    # 拼接查IN查询条件
+    in_query = '('
+    for id in ids:
+        in_query = in_query  + str(id) + ","
+    in_query = in_query[0:(len(in_query)-1)]
+    in_query = in_query + ')'
+
+    return in_query
+
 

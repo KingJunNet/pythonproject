@@ -122,6 +122,21 @@ class ExRecordList:
         return len(self.ids)
 
 
+class UserInfo:
+    def __init__(self,id=0,identity=0):
+        self.id=id
+        self.identity=identity
+
+    @staticmethod
+    def null():
+        return UserInfo(-1,-1)
+
+    def is_null(self):
+        return self.id==-1 and self.identity==-1
+
+
+
+
 
 
 

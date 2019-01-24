@@ -2,7 +2,7 @@
 from cfg_mapper import OriShareResourceDBConfig
 from core.time_util import *
 from core.sql_db_client import AzureDBClient
-from core.sql_pro import sql_sesson
+from core.sql_pro import *
 
 # ori_share_resource_db_config= OriShareResourceDBConfig()
 # db_client = MsDBClient(host=ori_share_resource_db_config.host,
@@ -83,15 +83,7 @@ def load_class_ids(begin_time, end_time):
 def time_sql_condition(time_value):
     return "'%s'" % (time2string(time_value))
 
-def build_in_query_sql(ids=[]):
-    # 拼接查IN查询条件
-    in_query = '('
-    for id in ids:
-        in_query = in_query  + str(id) + ","
-    in_query = in_query[0:(len(in_query)-1)]
-    in_query = in_query + ')'
 
-    return in_query
 
 #test
 # # from_time=DateTime.try_parse('2001-01-01')

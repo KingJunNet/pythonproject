@@ -54,4 +54,10 @@ share_resource_db_config_production = {"host": "192.168.200.199",
                                     "pwd": "",
                                     "db": "FcrShareResourceDBTransfer"}
 
+# share_resource_db_config_production = {"host": "119.3.108.249",
+#                                 "port": 8635,
+#                                     "user": "rwuser",
+#                                     "pwd": "Dfwd011**2019",
+#                                     "db": "FcrShareResourceONLINE"}
+
 

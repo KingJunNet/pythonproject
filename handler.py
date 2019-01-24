@@ -9,9 +9,55 @@ from core.time_util import time2string
 # tz_utc_8 =datetime.timezone(datetime.timedelta(hours=8))
 SharedLevel={"SELFANDGROUPOWNER": 0,"GROUP":1, "PRIVATE": 2}
 ResourceType={ "UnKnown":0, "Folder":1, "File":2}
+page_size=200
 
 def sqlTextResult2String(text):
     return text.encode("utf-8")
+
+class UserInfoCache:
+    def __init__(self):
+        self.ids = []
+        self.datas = {}
+
+    def add(self,id=0,user_info=UserInfo()):
+        self.ids.append(id)
+        self.datas[id] = user_info
+
+    def batch_add(self,user_ids=[]):
+        #1.筛选新的Id
+        new_user_ids=[x for x in user_ids if x not in self.ids]
+        if new_user_ids == None or len(new_user_ids) <= 0:
+            return
+
+        #2.批量查询新用户
+        user_datas=batch_get_user(new_user_ids)
+        if user_datas == None:
+            user_datas=[]
+
+        # 3.遍历添加
+        for new_user_id in new_user_ids:
+            user_info = UserInfo.null()
+            new_user_datas = [x for x in user_datas if x[0] == new_user_id]
+            if new_user_datas:
+                user_info =UserInfo(new_user_datas[0][0],new_user_datas[0][1])
+            self.add(new_user_id,user_info)
+
+    def get_user_by_id(self,id=0):
+        if id in self.ids:
+            return self.datas[id]
+
+        user_info=UserInfo.null()
+        user_data=get_user(id)
+        if user_data:
+            user_info=UserInfo(id, user_data[1])
+        self.add(id,user_info)
+
+        return user_info
+
+    def size(self):
+        return len(self.ids)
+
+user_cache=UserInfoCache()
 
 class DataHandler:
     """"
@@ -97,7 +143,7 @@ class ClassDataHandler:
         self.begin_time=begin_time
         self.end_time=end_time
         self.page_index = 1
-        self.page_size = 10
+        self.page_size = page_size
         self.count=0
         self.page_count=0
         self.student_users=[]
@@ -298,14 +344,15 @@ class ClassDataHandler:
                 create_user_id=user_id
             else:
                 self.ex_records.add(id, '用户已删除或离班;未知')
-                user_data=get_user(user_id)
-                if user_data==None:
+                user_info=user_cache.get_user_by_id(user_id)
+                if user_info.is_null():
                     self.ex_records.add(id, '用户不存在（物理删除）;未处理')
                     return False
-                if user_data[11]==1:
+                user_identity=user_info.identity
+                if user_identity==1:
                     sharedLevel=1
                     create_user_id=cur_subject_teacher_user_id
-                elif user_data[11]==2:
+                elif user_identity==2:
                     sharedLevel = 0
                     create_user_id = user_id #todo:可能会带来问题
                 else:
@@ -362,6 +409,9 @@ class ClassDataHandler:
         if datas == None or len(datas) <= 0:
             return
 
+        #提取用户信息
+        self.extract_user_info(datas)
+
         for data in datas:
             share_resource = self.ori_share_resource_data2share_resource_entity(data)
             if not share_resource:
@@ -372,6 +422,20 @@ class ClassDataHandler:
         # self.share_resources_parent_id_patch(share_resources)
 
         return share_resources
+
+    def extract_user_info(self,datas):
+        #筛选需要在库里查询的用户Id
+        user_ids= map(lambda x: x[6], datas)
+        new_user_ids=[]
+        for user_id in user_ids:
+            if (user_id in self.student_users) or (user_id in self.subject_teacher_users.values()) or (user_id in new_user_ids):
+                continue
+            new_user_ids.append(user_id)
+
+        #批量添加
+        if new_user_ids == None or len(new_user_ids) <= 0:
+            return
+        user_cache.batch_add(new_user_ids)
 
     def share_resources_parent_id_patch(self, share_resources):
         """"
