@@ -441,8 +441,8 @@ class ClassDataHandler:
                      :return:
                      """
         try:
-
-            gids = map(self.select_gid, share_resources)
+            gid_result = map(self.select_before_begin_time_created_gid , share_resources)
+            gids = [x for x in gid_result if x ]
             if gids == None or len(gids) <= 0:
                 return
 
