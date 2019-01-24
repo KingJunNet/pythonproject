@@ -2,7 +2,7 @@
 import time
 import datetime
 
-CONST_DEFAULT_TIME_FOMAT = "%Y-%m-%d"
+CONST_DEFAULT_TIME_FOMAT = "%Y-%m-%d %H:%M:%S"
 
 class DateTime:
     @staticmethod
