@@ -28,4 +28,3 @@ def time2string(time=datetime.datetime.now()):
 def string2localtime(time_str):
     return datetime.datetime.strptime(time_str, CONST_DEFAULT_TIME_FOMAT)
 
-
