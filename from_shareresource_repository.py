@@ -15,19 +15,6 @@ from core.sql_pro import *
 def db_client():
     return sql_sesson(OriShareResourceDBConfig())
 
-def load_share_resourcesA(class_id, begin_time, end_time, page_index, page_size):
-    datas = []
-
-    row_begin = page_size * (page_index - 1)
-    row_end = page_size * page_index
-    datas = db_client().ExecQuery("SELECT * FROM("
-                                " SELECT  ROW_NUMBER() OVER(ORDER BY Id ASC) AS ROWID,*"
-                                " FROM [dbo].[res_ShareResources]"
-                                " WHERE ClassId = " + str(class_id) +
-                                " AND CreateTime >=" + time_sql_condition(begin_time) +
-                                " AND CreateTime < " + time_sql_condition(end_time)+") AS TEMP"
-                                " WHERE ROWID > " + str(row_begin) + " AND ROWID <=" + str(row_end))
-
 def load_share_resources(class_id, begin_time, end_time, page_index, page_size):
     datas = []
 
@@ -41,8 +28,8 @@ def load_share_resources(class_id, begin_time, end_time, page_index, page_size):
                                 " SELECT  ROW_NUMBER() OVER(ORDER BY Id ASC) AS ROWID,*"
                                 " FROM [dbo].[res_ShareResources]"
                                 " WHERE Available=1 AND  ClassId = " + str(class_id) +
-                                " AND CreateTime >=" + time_sql_condition(begin_time) +
-                                " AND CreateTime < " + time_sql_condition(end_time) + ") AS TEMP"
+                                " AND UpdateTime >=" + time_sql_condition(begin_time) +
+                                " AND UpdateTime < " + time_sql_condition(end_time) + ") AS TEMP"
                                 " WHERE ROWID > " + str(row_begin) + " AND ROWID <=" + str(row_end) +
                                 ") R LEFT JOIN [dbo].[res_ShareResources] S ON R.ParentId=S.Id")
 
@@ -54,8 +41,8 @@ def get_share_resource_count(class_id, begin_time, end_time):
     datas = db_client().ExecQuery("SELECT COUNT(Id)"                              
                                 " FROM [dbo].[res_ShareResources]"                        
                                 " WHERE Available=1 AND  ClassId = " + str(class_id) +
-                                " AND CreateTime >= " + time_sql_condition(begin_time) +
-                                " AND CreateTime < " + time_sql_condition(end_time))
+                                " AND UpdateTime >= " + time_sql_condition(begin_time) +
+                                " AND UpdateTime < " + time_sql_condition(end_time))
     count=datas[0][0]
 
     return count
@@ -75,8 +62,8 @@ def load_class_ids(begin_time, end_time):
 
     datas = db_client().ExecQuery(
         "SELECT DISTINCT(ClassId) FROM [dbo].[res_ShareResources]"
-        " WHERE CreateTime < " + time_sql_condition(end_time) +
-        " AND CreateTime >= " + time_sql_condition(begin_time))
+        " WHERE UpdateTime < " + time_sql_condition(end_time) +
+        " AND UpdateTime >= " + time_sql_condition(begin_time))
 
     return datas
 
