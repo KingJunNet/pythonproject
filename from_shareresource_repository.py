@@ -63,7 +63,8 @@ def load_class_ids(begin_time, end_time):
     datas = db_client().ExecQuery(
         "SELECT DISTINCT(ClassId) FROM [dbo].[res_ShareResources]"
         " WHERE UpdateTime < " + time_sql_condition(end_time) +
-        " AND UpdateTime >= " + time_sql_condition(begin_time))
+        " AND UpdateTime >= " + time_sql_condition(begin_time)+
+        " order by ClassId ")
 
     return datas
 

@@ -76,6 +76,7 @@ class DataHandler:
         self.ex_record_count =0
         self.class_deleted_count = 0
         self.share_resources_deleted_count = 0
+        self.error_class_ids = []
 
 
     def work(self):
@@ -104,10 +105,12 @@ class DataHandler:
                     self.class_deleted_count +=class_data_handler.class_deleted_count
                     self.share_resources_deleted_count += class_data_handler.share_resources_deleted_count
                 except Exception, ex:
+                    self.error_class_ids.append(class_id)
                     log_ex('处理班级%d-%d-%d数据发生异常：%s,%s' % (class_size,index+1,class_id,ex.message, self.data_tag))
                 log_info('班级%d-%d-%d数据处理结束，%s' % (class_size,index+1,class_id, self.data_tag))
 
             #输出报表
+            self.log_error_class()
             log_info('本次任务数据处理完毕，'
                      '需处理共享资源数目：%d,'
                      '实际入库共享资源数目：%d,'
@@ -128,6 +131,12 @@ class DataHandler:
         log_cost(start_time)
         log_info('本次处理结束，%s' % self.data_tag)
 
+    def log_error_class(self):
+        if  len(self.error_class_ids) <= 0:
+            return
+        character=','
+        message="本次迁移发生异常的班级："+character.join(map(lambda x: str(x), self.error_class_ids))
+        log_info(message)
     def init_data_tag(self):
         return '目标数据:begintime[%s] endtime[%s]' % (time2string(self.begin_time) ,time2string(self.end_time))
 
@@ -431,7 +440,7 @@ class ClassDataHandler:
         return share_resources
 
     def select_before_begin_time_created_gid(self,share_resource=ShareResource()):
-        if share_resource.createTime<self.begin_time:
+        if share_resource.createTime<DateTime.timezone8(self.begin_time):
             return share_resource.gid
 
     def delete_have_added_share_resource_patch(self, share_resources):

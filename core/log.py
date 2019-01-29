@@ -17,7 +17,7 @@ def log_info(message):
 
 def log_ex(message):
     print(message.decode('UTF-8'))
-    logging.exception()
+    logging.exception(message)
 
 def log_cost(start_time = time.time()):
     # 计算时间差值
